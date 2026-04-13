@@ -1,0 +1,1516 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tuimagen Studio — Bots de Telegram con IA</title>
+  <meta name="description" content="Automatizá tu negocio con un Bot de Telegram con IA. Responde 24/7, en español, inglés y ruso. Tuimagen Studio.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue: #0066FF;
+      --neon: #00CCFF;
+      --neon2: #00FFCC;
+      --black: #0A0A0A;
+      --dark: #0d0d0d;
+      --card: #111318;
+      --border: rgba(0, 204, 255, 0.18);
+      --text: #e8eaf0;
+      --muted: #7a8a9a;
+      --gold: #D4AF72;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Syne', sans-serif;
+      background: var(--black);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ── CANVAS STARS ── */
+    #stars-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 3rem;
+      background: rgba(10,10,10,0.85);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: var(--gold);
+      letter-spacing: 0.08em;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--neon); }
+
+    .nav-cta {
+      background: transparent;
+      border: 1px solid var(--neon);
+      color: var(--neon) !important;
+      padding: 0.45rem 1.2rem;
+      border-radius: 4px;
+      transition: background 0.2s, color 0.2s !important;
+    }
+
+    .nav-cta:hover {
+      background: var(--neon) !important;
+      color: var(--black) !important;
+    }
+
+    /* ── SECTIONS BASE ── */
+    section {
+      position: relative;
+      z-index: 1;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-top: 80px;
+      overflow: hidden;
+    }
+
+    .hero-grid-lines {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,102,255,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,102,255,0.06) 1px, transparent 1px);
+      background-size: 60px 60px;
+      animation: gridPulse 8s ease-in-out infinite;
+    }
+
+    @keyframes gridPulse {
+      0%,100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    .hero-glow {
+      position: absolute;
+      width: 700px;
+      height: 700px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,102,255,0.15) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: glowPulse 4s ease-in-out infinite;
+    }
+
+    @keyframes glowPulse {
+      0%,100% { transform: translate(-50%, -50%) scale(1); opacity: 0.7; }
+      50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--neon);
+      border: 1px solid rgba(0,204,255,0.4);
+      padding: 0.4rem 1.2rem;
+      border-radius: 100px;
+      margin-bottom: 2rem;
+      animation: fadeInDown 0.8s ease both;
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(2.2rem, 6vw, 5rem);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+      animation: fadeInUp 0.9s ease 0.2s both;
+    }
+
+    .hero-title .highlight {
+      background: linear-gradient(90deg, var(--blue), var(--neon), var(--neon2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 600px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.7;
+      animation: fadeInUp 0.9s ease 0.35s both;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeInUp 0.9s ease 0.5s both;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .btn-primary {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--blue), var(--neon));
+      color: #000;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 0.85rem 2rem;
+      border-radius: 6px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 0 30px rgba(0,102,255,0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 50px rgba(0,204,255,0.6);
+    }
+
+    .btn-secondary {
+      display: inline-block;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 0.85rem 2rem;
+      border-radius: 6px;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--neon);
+      color: var(--neon);
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 3rem;
+      justify-content: center;
+      margin-top: 4rem;
+      animation: fadeInUp 0.9s ease 0.65s both;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--neon), var(--neon2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 0.3rem;
+    }
+
+    /* ── SECTION TITLES ── */
+    .section-tag {
+      font-size: 0.68rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--neon);
+      margin-bottom: 0.8rem;
+    }
+
+    .section-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.6rem, 3.5vw, 2.8rem);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 1.2rem;
+    }
+
+    .section-desc {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.7;
+      max-width: 560px;
+    }
+
+    /* ── PROBLEMA ── */
+    #problema {
+      padding: 100px 0;
+    }
+
+    .problema-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .pain-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      margin-top: 2rem;
+    }
+
+    .pain-list li {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.3rem;
+      transition: border-color 0.2s;
+    }
+
+    .pain-list li:hover {
+      border-color: rgba(0,102,255,0.4);
+    }
+
+    .pain-icon {
+      font-size: 1.4rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .pain-text strong {
+      display: block;
+      font-size: 0.9rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .pain-text span {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .problema-visual {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .problem-card {
+      background: var(--card);
+      border: 1px solid rgba(255,60,60,0.25);
+      border-radius: 16px;
+      padding: 2.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .problem-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 0%, rgba(255,60,60,0.08), transparent 60%);
+    }
+
+    .big-num {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 5rem;
+      font-weight: 900;
+      color: rgba(255,80,80,0.6);
+      line-height: 1;
+    }
+
+    .big-label {
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+      line-height: 1.5;
+    }
+
+    /* ── SOLUCIÓN ── */
+    #solucion {
+      padding: 100px 0;
+      background: linear-gradient(180deg, transparent, rgba(0,102,255,0.04), transparent);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.8rem;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--blue), var(--neon));
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(0,204,255,0.35);
+      box-shadow: 0 20px 40px rgba(0,102,255,0.12);
+    }
+
+    .feature-card:hover::before { opacity: 1; }
+
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+      color: var(--neon);
+    }
+
+    .feature-desc {
+      font-size: 0.87rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── DEMOS ── */
+    #demos {
+      padding: 100px 0;
+    }
+
+    .demos-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .demos-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    .demo-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem;
+      text-align: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .demo-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 100%, rgba(0,102,255,0.1), transparent 60%);
+    }
+
+    .demo-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 30px 60px rgba(0,102,255,0.18);
+    }
+
+    .demo-emoji {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .demo-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+
+    .demo-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .demo-tag {
+      display: inline-block;
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      background: rgba(0,204,255,0.1);
+      border: 1px solid rgba(0,204,255,0.3);
+      color: var(--neon);
+      padding: 0.3rem 0.9rem;
+      border-radius: 100px;
+      margin-bottom: 1.5rem;
+    }
+
+    .btn-demo {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--blue), var(--neon));
+      color: #000;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 0.7rem 1.8rem;
+      border-radius: 6px;
+      transition: box-shadow 0.2s, transform 0.2s;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-demo:hover {
+      box-shadow: 0 0 30px rgba(0,204,255,0.5);
+      transform: translateY(-2px);
+    }
+
+    /* ── INCLUYE ── */
+    #incluye {
+      padding: 100px 0;
+      background: linear-gradient(180deg, transparent, rgba(0,204,255,0.03), transparent);
+    }
+
+    .incluye-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .checklist {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .checklist li {
+      display: flex;
+      gap: 0.8rem;
+      align-items: center;
+      font-size: 0.92rem;
+    }
+
+    .check-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), var(--neon));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.65rem;
+    }
+
+    .process-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .step {
+      display: flex;
+      gap: 1.2rem;
+      align-items: flex-start;
+    }
+
+    .step-num {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: rgba(0,204,255,0.2);
+      line-height: 1;
+      flex-shrink: 0;
+      width: 2.5rem;
+    }
+
+    .step-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: var(--neon);
+      margin-bottom: 0.3rem;
+    }
+
+    .step-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ── PRECIOS ── */
+    #precios {
+      padding: 100px 0;
+    }
+
+    .precios-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    .price-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      transition: transform 0.2s;
+    }
+
+    .price-card.featured {
+      border-color: var(--neon);
+      box-shadow: 0 0 40px rgba(0,204,255,0.15);
+      position: relative;
+    }
+
+    .price-card.featured::before {
+      content: 'MÁS POPULAR';
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(90deg, var(--blue), var(--neon));
+      color: #000;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 900;
+      letter-spacing: 0.15em;
+      padding: 0.3rem 1rem;
+      border-radius: 100px;
+    }
+
+    .price-card:hover { transform: translateY(-4px); }
+
+    .price-tier {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--neon);
+      margin-bottom: 0.5rem;
+    }
+
+    .price-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+    }
+
+    .price-sub {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .price-amount {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--text), var(--neon));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.3rem;
+    }
+
+    .price-note {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .price-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+      margin-bottom: 2rem;
+    }
+
+    .price-features li {
+      display: flex;
+      gap: 0.6rem;
+      font-size: 0.83rem;
+      color: var(--muted);
+    }
+
+    .price-features .ok { color: var(--neon2); }
+    .price-features .no { color: rgba(255,255,255,0.2); }
+
+    .btn-price {
+      display: block;
+      text-align: center;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 0.75rem;
+      border-radius: 8px;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .btn-price:hover,
+    .price-card.featured .btn-price {
+      background: linear-gradient(135deg, var(--blue), var(--neon));
+      border-color: transparent;
+      color: #000;
+    }
+
+    /* ── SOBRE MÍ ── */
+    #sobre-mi {
+      padding: 100px 0;
+    }
+
+    .sobre-inner {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .sobre-visual {
+      position: relative;
+    }
+
+    .avatar-frame {
+      width: 280px;
+      height: 280px;
+      border-radius: 24px;
+      border: 2px solid var(--border);
+      background: var(--card);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      margin: 0 auto;
+    }
+
+    .avatar-frame::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      background: linear-gradient(135deg, var(--blue), var(--neon), var(--neon2), var(--blue));
+      border-radius: 26px;
+      z-index: -1;
+      animation: rotateGrad 4s linear infinite;
+    }
+
+    @keyframes rotateGrad {
+      from { filter: hue-rotate(0deg); }
+      to   { filter: hue-rotate(360deg); }
+    }
+
+    .avatar-inner {
+      font-size: 7rem;
+      line-height: 1;
+    }
+
+    .sobre-tag {
+      position: absolute;
+      bottom: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--card);
+      border: 1px solid var(--neon);
+      color: var(--neon);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      padding: 0.4rem 1rem;
+      border-radius: 100px;
+      white-space: nowrap;
+    }
+
+    .sobre-text h3 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+
+    .sobre-role {
+      color: var(--neon);
+      font-size: 0.82rem;
+      letter-spacing: 0.1em;
+      margin-bottom: 1.2rem;
+    }
+
+    .sobre-bio {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+    }
+
+    .skills-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .skill-tag {
+      font-size: 0.72rem;
+      background: rgba(0,102,255,0.12);
+      border: 1px solid rgba(0,102,255,0.3);
+      color: var(--neon);
+      padding: 0.3rem 0.8rem;
+      border-radius: 100px;
+      letter-spacing: 0.05em;
+    }
+
+    .idiomas {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .idioma {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-size: 0.8rem;
+      text-align: center;
+    }
+
+    .idioma .flag { font-size: 1.2rem; display: block; margin-bottom: 0.2rem; }
+
+    /* ── CONTACTO ── */
+    #contacto {
+      padding: 100px 0;
+    }
+
+    .contacto-inner {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 4rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .contacto-inner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(0,102,255,0.12), transparent 60%);
+    }
+
+    .contacto-inner > * { position: relative; z-index: 1; }
+
+    .contacto-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 700;
+      margin-bottom: 0.8rem;
+    }
+
+    .contacto-sub {
+      color: var(--muted);
+      margin-bottom: 2.5rem;
+      font-size: 0.95rem;
+    }
+
+    .contact-channels {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 2.5rem;
+    }
+
+    .channel-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--text);
+      text-decoration: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .channel-btn:hover {
+      border-color: var(--neon);
+      color: var(--neon);
+      background: rgba(0,204,255,0.05);
+      transform: translateY(-2px);
+    }
+
+    .channel-btn .ch-icon { font-size: 1.1rem; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+
+    footer .footer-logo {
+      font-family: 'Orbitron', sans-serif;
+      color: var(--gold);
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+    }
+
+    /* ── DIVIDER ── */
+    .neon-divider {
+      width: 80px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--blue), var(--neon));
+      margin: 1.2rem 0 2rem;
+      border-radius: 2px;
+    }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── BOT WIDGET ── */
+    .bot-widget-wrap {
+      margin-top: 3rem;
+    }
+
+    .bot-widget-label {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--neon);
+      margin-bottom: 1rem;
+      justify-content: center;
+    }
+
+    .blink-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--neon2);
+      box-shadow: 0 0 8px var(--neon2);
+      animation: blink 1.2s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes blink {
+      0%,100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+
+    .bot-widget-frame {
+      position: relative;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      max-width: 700px;
+      margin: 0 auto;
+      box-shadow: 0 0 60px rgba(0,204,255,0.1);
+    }
+
+    .bot-widget-frame iframe {
+      display: block;
+      min-height: 520px;
+    }
+
+    .widget-fallback {
+      display: none;
+      text-align: center;
+      padding: 3rem;
+      color: var(--muted);
+    }
+
+    .widget-fallback p { margin-top: 0.5rem; font-size: 0.9rem; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .hero-stats { gap: 1.5rem; }
+      .problema-inner,
+      .incluye-inner,
+      .sobre-inner { grid-template-columns: 1fr; gap: 2rem; }
+      .features-grid { grid-template-columns: 1fr; }
+      .demos-grid { grid-template-columns: 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .contacto-inner { padding: 2.5rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="stars-canvas"></canvas>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">TUIMAGENSTUDIO<span style="color:var(--neon)">.</span></a>
+    <ul class="nav-links">
+      <li><a href="#problema">El Problema</a></li>
+      <li><a href="#solucion">Solución</a></li>
+      <li><a href="#demos">Demos</a></li>
+      <li><a href="#precios">Precios</a></li>
+      <li><a href="#sobre-mi">Yo</a></li>
+      <li><a href="#contacto" class="nav-cta">Contacto</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-grid-lines"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-content container">
+      <span class="hero-badge">🤖 AI — Inteligencia Artificial</span>
+      <h1 class="hero-title">
+        Tu negocio<br>
+        <span class="highlight">automatizado con IA</span><br>
+        en Telegram
+      </h1>
+      <p class="hero-sub">
+        Un bot que responde 24/7, conoce tu negocio, habla como tu marca<br>
+        y convierte mensajes en clientes — en español, inglés y ruso.
+      </p>
+      <div class="hero-btns">
+        <a href="https://t.me/tuimagenstudio_bot" target="_blank" class="btn-primary">Probar Demo en Vivo</a>
+        <a href="#precios" class="btn-secondary">Ver Precios</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-num">24/7</div>
+          <div class="stat-label">Sin descanso</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">3</div>
+          <div class="stat-label">Idiomas</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">7d</div>
+          <div class="stat-label">Entrega</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">∞</div>
+          <div class="stat-label">Mensajes</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROBLEMA -->
+  <section id="problema">
+    <div class="container">
+      <div class="problema-inner reveal">
+        <div>
+          <p class="section-tag">// el problema</p>
+          <h2 class="section-title">¿Tu negocio sigue respondiendo mensajes<br><span style="color:var(--neon)">a mano?</span></h2>
+          <div class="neon-divider"></div>
+          <ul class="pain-list">
+            <li>
+              <span class="pain-icon">😤</span>
+              <div class="pain-text">
+                <strong>Respondés la misma pregunta 10 veces al día</strong>
+                <span>Horarios, precios, disponibilidad — siempre lo mismo.</span>
+              </div>
+            </li>
+            <li>
+              <span class="pain-icon">🌙</span>
+              <div class="pain-text">
+                <strong>Clientes que escriben fuera de horario</strong>
+                <span>Si no respondés rápido, se van con la competencia.</span>
+              </div>
+            </li>
+            <li>
+              <span class="pain-icon">📉</span>
+              <div class="pain-text">
+                <strong>Oportunidades de venta que se escapan</strong>
+                <span>Un mensaje sin respuesta es una venta perdida.</span>
+              </div>
+            </li>
+            <li>
+              <span class="pain-icon">⏳</span>
+              <div class="pain-text">
+                <strong>Tiempo valioso que perdés atendiendo</strong>
+                <span>Tu energía debería estar en crecer, no en responder.</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="problema-visual">
+          <div class="problem-card">
+            <div class="big-num">87%</div>
+            <div class="big-label">de los clientes esperan<br>respuesta en menos de 1 hora.<br><br><span style="color:rgba(255,80,80,0.7)">¿Cuántos perdés por no responder a tiempo?</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOLUCIÓN -->
+  <section id="solucion">
+    <div class="container">
+      <div class="reveal">
+        <p class="section-tag">// la solución</p>
+        <h2 class="section-title">Un Bot de Telegram con IA<br><span style="color:var(--neon)">que trabaja por vos</span></h2>
+        <div class="neon-divider"></div>
+        <p class="section-desc">Construido con inteligencia artificial, entrenado con la información de tu negocio, listo en 7 días.</p>
+      </div>
+      <div class="features-grid reveal">
+        <div class="feature-card">
+          <div class="feature-icon">🕐</div>
+          <div class="feature-title">Disponible 24/7</div>
+          <div class="feature-desc">Responde a cualquier hora, cualquier día. Sin días libres, sin vacaciones, sin demoras.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🧠</div>
+          <div class="feature-title">Conoce tu negocio</div>
+          <div class="feature-desc">Sabe tus precios, productos, horarios y políticas. Responde con precisión como si fueras vos.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🌍</div>
+          <div class="feature-title">3 Idiomas</div>
+          <div class="feature-desc">Español, inglés y ruso. Detecta el idioma del cliente y responde automáticamente.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎭</div>
+          <div class="feature-title">Tu personalidad</div>
+          <div class="feature-desc">Habla con el tono y estilo de tu marca. No suena a robot — suena a vos.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <div class="feature-title">Capta leads</div>
+          <div class="feature-desc">Registra datos de clientes interesados y te notifica para que hagas el seguimiento.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <div class="feature-title">Listo en 7 días</div>
+          <div class="feature-desc">Desarrollo, configuración, pruebas y entrega en una semana. Rápido y sin complicaciones.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEMOS -->
+  <section id="demos">
+    <div class="container">
+      <div class="demos-header reveal">
+        <p class="section-tag">// demos en vivo</p>
+        <h2 class="section-title">Probálos ahora mismo</h2>
+        <div class="neon-divider" style="margin:1.2rem auto 0;"></div>
+      </div>
+      <div class="demos-grid reveal">
+        <div class="demo-card">
+          <span class="demo-emoji">🎨</span>
+          <div class="demo-tag">Bot de Servicios Digitales</div>
+          <div class="demo-name">@tuimagenstudio_bot</div>
+          <div class="demo-desc">Bot demo de Tuimagen Studio. Responde sobre servicios de diseño, marketing y automatización con IA. Funciona en ES, EN y RU.</div>
+          <a href="https://t.me/tuimagenstudio_bot" target="_blank" class="btn-demo">Abrir en Telegram →</a>
+        </div>
+        <div class="demo-card">
+          <span class="demo-emoji">🥧</span>
+          <div class="demo-tag">Bot para Pastelería / Food</div>
+          <div class="demo-name">@pies_history_bot</div>
+          <div class="demo-desc">Bot para una pastelería real. Atiende consultas sobre productos, precios, pedidos y horarios. Ejemplo perfecto para negocios gastronómicos.</div>
+          <a href="https://t.me/tuimagenstudio_bot" target="_blank" class="btn-demo">Abrir en Telegram →</a>
+        </div>
+      </div>
+      <!-- WIDGET EMBEBIDO -->
+      <div class="bot-widget-wrap reveal">
+        <div class="bot-widget-label">
+          <span class="blink-dot"></span>
+          <span>Bot activo — probalo acá mismo</span>
+        </div>
+        <div class="bot-widget-frame">
+          <iframe
+            src="https://xn--r1a.website/s/tuimagenstudio_bot"
+            width="100%"
+            height="520"
+            frameborder="0"
+            scrolling="no"
+            allowtransparency="true"
+            style="border-radius:14px;"
+          ></iframe>
+          <!-- Fallback si el iframe no carga -->
+          <div class="widget-fallback">
+            <span style="font-size:2.5rem">🤖</span>
+            <p>¿El widget no carga?</p>
+            <a href="https://t.me/tuimagenstudio_bot" target="_blank" class="btn-primary" style="display:inline-block;margin-top:1rem;">Abrir en Telegram →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INCLUYE -->
+  <section id="incluye">
+    <div class="container">
+      <div class="incluye-inner reveal">
+        <div>
+          <p class="section-tag">// lo que incluye</p>
+          <h2 class="section-title">Todo lo que necesitás<br><span style="color:var(--neon)">desde el día uno</span></h2>
+          <div class="neon-divider"></div>
+          <ul class="checklist">
+            <li><span class="check-icon">✓</span> Bot funcional en Telegram</li>
+            <li><span class="check-icon">✓</span> Entrenamiento con la info de tu negocio</li>
+            <li><span class="check-icon">✓</span> Respuestas en tu tono y estilo</li>
+            <li><span class="check-icon">✓</span> Detección automática de idioma</li>
+            <li><span class="check-icon">✓</span> Configuración completa e instalación</li>
+            <li><span class="check-icon">✓</span> Capacitación para que lo manejes vos</li>
+            <li><span class="check-icon">✓</span> Soporte post-entrega</li>
+            <li><span class="check-icon">✓</span> Plan de mantenimiento mensual (opcional)</li>
+          </ul>
+        </div>
+        <div class="process-steps">
+          <h3 style="font-family:'Orbitron',sans-serif;font-size:0.85rem;letter-spacing:0.1em;color:var(--neon);margin-bottom:1.5rem;text-transform:uppercase;">Cómo funciona el proceso</h3>
+          <div class="step">
+            <div class="step-num">01</div>
+            <div>
+              <div class="step-title">Diagnóstico inicial</div>
+              <div class="step-desc">Analizamos tu negocio, tus clientes frecuentes y las preguntas más comunes.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">02</div>
+            <div>
+              <div class="step-title">Diseño del bot</div>
+              <div class="step-desc">Creamos la personalidad, el tono y la lógica de conversación a medida.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">03</div>
+            <div>
+              <div class="step-title">Desarrollo & pruebas</div>
+              <div class="step-desc">Programamos, entrenamos y testeamos el bot con escenarios reales.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">04</div>
+            <div>
+              <div class="step-title">Entrega & capacitación</div>
+              <div class="step-desc">Lanzamos tu bot, te explicamos cómo usarlo y te dejamos el control total.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRECIOS -->
+  <section id="precios">
+    <div class="container">
+      <div class="precios-header reveal">
+        <p class="section-tag">// inversión</p>
+        <h2 class="section-title">Planes <span style="color:var(--neon)">claros y directos</span></h2>
+        <div class="neon-divider" style="margin:1.2rem auto;"></div>
+        <p style="color:var(--muted);font-size:0.9rem;">Precios en USD · Consultá disponibilidad y formas de pago</p>
+      </div>
+      <div class="pricing-grid reveal">
+        <div class="price-card">
+          <div class="price-tier">Starter</div>
+          <div class="price-name">Bot Esencial</div>
+          <div class="price-sub">Para negocios que arrancan</div>
+          <div class="price-amount">Consultar</div>
+          <div class="price-note">Pago único · Sin sorpresas</div>
+          <ul class="price-features">
+            <li><span class="ok">✓</span> Bot funcional en Telegram</li>
+            <li><span class="ok">✓</span> Hasta 30 respuestas configuradas</li>
+            <li><span class="ok">✓</span> 1 idioma</li>
+            <li><span class="ok">✓</span> Capacitación incluida</li>
+            <li><span class="ok">✓</span> Soporte 15 días</li>
+            <li><span class="no">✗</span> Multi-idioma</li>
+            <li><span class="no">✗</span> Mantenimiento mensual</li>
+          </ul>
+          <a href="#contacto" class="btn-price">Empezar</a>
+        </div>
+        <div class="price-card featured">
+          <div class="price-tier">Pro</div>
+          <div class="price-name">Bot Inteligente</div>
+          <div class="price-sub">Para negocios que quieren escalar</div>
+          <div class="price-amount">Consultar</div>
+          <div class="price-note">Pago único · Entrega en 7 días</div>
+          <ul class="price-features">
+            <li><span class="ok">✓</span> Bot completo con IA avanzada</li>
+            <li><span class="ok">✓</span> Respuestas ilimitadas</li>
+            <li><span class="ok">✓</span> 3 idiomas (ES, EN, RU)</li>
+            <li><span class="ok">✓</span> Tono y personalidad de marca</li>
+            <li><span class="ok">✓</span> Captación de leads</li>
+            <li><span class="ok">✓</span> Capacitación + soporte 30 días</li>
+            <li><span class="ok">✓</span> Mantenimiento mensual opcional</li>
+          </ul>
+          <a href="#contacto" class="btn-price">Lo quiero</a>
+        </div>
+        <div class="price-card">
+          <div class="price-tier">Mantenimiento</div>
+          <div class="price-name">Plan Mensual</div>
+          <div class="price-sub">Para mantenerlo siempre actualizado</div>
+          <div class="price-amount">Consultar</div>
+          <div class="price-note">Por mes · Cancelá cuando quieras</div>
+          <ul class="price-features">
+            <li><span class="ok">✓</span> Actualizaciones de precios y datos</li>
+            <li><span class="ok">✓</span> Corrección de errores</li>
+            <li><span class="ok">✓</span> Mejoras menores</li>
+            <li><span class="ok">✓</span> Soporte ante caídas</li>
+            <li><span class="ok">✓</span> Canal de contacto prioritario</li>
+          </ul>
+          <a href="#contacto" class="btn-price">Agregar</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOBRE MÍ -->
+  <section id="sobre-mi">
+    <div class="container">
+      <div class="sobre-inner reveal">
+        <div class="sobre-visual">
+          <div class="avatar-frame">
+            <div class="avatar-inner">👩‍💻</div>
+          </div>
+          <span class="sobre-tag">Fundadora — Tuimagen Studio</span>
+        </div>
+        <div class="sobre-text">
+          <p class="section-tag">// sobre mí</p>
+          <h2 class="section-title">Hola, soy<br><span style="color:var(--gold)">Naty</span></h2>
+          <div class="neon-divider"></div>
+          <p class="sobre-bio">
+            Arquitecta de ideas & creadora multidimensional. Trabajo en el cruce entre tecnología, diseño, estrategia y automatización con IA.<br><br>
+            Fundé <strong style="color:var(--text)">Tuimagen Studio</strong> para ayudar a negocios a crecer de forma inteligente — sin complicarse con la tecnología.<br><br>
+            Trabajo con clientes de Argentina, Rusia y Latinoamérica.
+          </p>
+          <div class="skills-tags">
+            <span class="skill-tag">Bots con IA</span>
+            <span class="skill-tag">Automatización</span>
+            <span class="skill-tag">Video IA</span>
+            <span class="skill-tag">Marketing Digital</span>
+            <span class="skill-tag">Notion</span>
+            <span class="skill-tag">Prompting Avanzado</span>
+          </div>
+          <div class="idiomas">
+            <div class="idioma"><span class="flag">🇦🇷</span>Español</div>
+            <div class="idioma"><span class="flag">🇺🇸</span>English</div>
+            <div class="idioma"><span class="flag">🇷🇺</span>Русский</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACTO -->
+  <section id="contacto">
+    <div class="container reveal">
+      <div class="contacto-inner">
+        <p class="section-tag">// contacto</p>
+        <h2 class="contacto-title">¿Listo para automatizar<br><span style="background:linear-gradient(90deg,var(--blue),var(--neon));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">tu negocio?</span></h2>
+        <p class="contacto-sub">Escribime y en una semana tu bot está live. Sin tecnicismos, sin vueltas.</p>
+        <div class="contact-channels">
+          <a href="https://t.me/tuimagenstudio_bot" target="_blank" class="channel-btn">
+            <span class="ch-icon">✈️</span> Telegram
+          </a>
+          <a href="https://www.instagram.com/tuimagenstudio" target="_blank" class="channel-btn">
+            <span class="ch-icon">📸</span> Instagram
+          </a>
+          <a href="mailto:contacto@tuimagenstudio.com" class="channel-btn">
+            <span class="ch-icon">📧</span> Email
+          </a>
+        </div>
+        <a href="https://t.me/tuimagenstudio_bot" target="_blank" class="btn-primary">Empezar ahora →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">TUIMAGENSTUDIO</div>
+    <p>© 2026 Tuimagen Studio · Bots de Telegram con IA · Hecho con 💙 por Naty</p>
+  </footer>
+
+  <script>
+    // ── STARS CANVAS ──
+    const canvas = document.getElementById('stars-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    const stars = Array.from({ length: 120 }, () => ({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      r: Math.random() * 1.5 + 0.3,
+      a: Math.random(),
+      speed: Math.random() * 0.005 + 0.002,
+      color: Math.random() > 0.7 ? '#00CCFF' : '#ffffff'
+    }));
+
+    function drawStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      stars.forEach(s => {
+        s.a += s.speed;
+        if (s.a > 1) s.a = 0;
+        const alpha = Math.abs(Math.sin(s.a * Math.PI));
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = s.color === '#00CCFF'
+          ? `rgba(0,204,255,${alpha * 0.6})`
+          : `rgba(255,255,255,${alpha * 0.4})`;
+        ctx.fill();
+      });
+      requestAnimationFrame(drawStars);
+    }
+    drawStars();
+
+    // ── SCROLL REVEAL ──
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // ── SMOOTH NAV ──
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const id = a.getAttribute('href');
+        const el = document.querySelector(id);
+        if (el) {
+          e.preventDefault();
+          el.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
